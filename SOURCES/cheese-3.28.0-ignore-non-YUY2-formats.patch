@@ -1,0 +1,38 @@
+diff --cc libcheese/cheese-camera-device.c
+index e994c5f5,8f1e13af..00000000
+--- a/libcheese/cheese-camera-device.c
++++ b/libcheese/cheese-camera-device.c
+@@@ -181,18 -219,8 +181,19 @@@ cheese_camera_device_filter_caps (Chees
+  {
+    GstCaps *filter;
+    GstCaps *allowed;
+ +  gsize i;
+ +
+ +  filter = gst_caps_new_empty ();
+  
+ -    filter = format_caps (formats);
+ +  for (i = 0; formats[i] != NULL; i++)
+ +  {
+ +    gst_caps_append (filter,
+ +                     gst_caps_new_simple (formats[i],
+ +                                          "framerate", GST_TYPE_FRACTION_RANGE,
+ +                                          0, 1, CHEESE_MAXIMUM_RATE, 1,
+++                                          "format", G_TYPE_STRING, "YUY2",
+ +                                          NULL));
+ +  }
+  
+    allowed = gst_caps_intersect (caps, filter);
+  
+diff --git a/libcheese/cheese-camera-device-monitor.c b/libcheese/cheese-camera-device-monitor.c
+index 5b4b43b5..a15733bd 100644
+--- a/libcheese/cheese-camera-device-monitor.c
++++ b/libcheese/cheese-camera-device-monitor.c
+@@ -294,7 +294,7 @@ initable_init (GInitable     *initable,
+   gst_bus_add_watch (bus, cheese_camera_device_monitor_bus_func, monitor);
+   gst_object_unref (bus);
+ 
+-  caps = gst_caps_new_empty_simple ("video/x-raw");
++  caps = gst_caps_new_simple ("video/x-raw", "format", G_TYPE_STRING, "YUY2", NULL);
+   gst_device_monitor_add_filter (priv->monitor, "Video/Source", caps);
+   gst_caps_unref (caps);
+ 

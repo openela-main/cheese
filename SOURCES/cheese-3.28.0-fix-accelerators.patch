@@ -1,0 +1,49 @@
+From 446da7884914d471ce50f8b327edddbaf0d75ccb Mon Sep 17 00:00:00 2001
+From: esoleyman <emil@soleyman.com>
+Date: Fri, 24 May 2019 15:25:02 -0500
+Subject: [PATCH] Fix the accelerators
+
+The thumbnail view did not allow users to execute commands such as open,
+save as, trash, or delete for one or more photo / video thumbnails using
+keyboard shortcuts such as ctrl+o, ctrl+s, etc...
+
+https://gitlab.gnome.org/GNOME/cheese/issues/9
+---
+ src/cheese-application.vala | 2 +-
+ src/cheese-window.vala      | 7 +++++++
+ 2 files changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/src/cheese-application.vala b/src/cheese-application.vala
+index c4542be0..f46f3165 100644
+--- a/src/cheese-application.vala
++++ b/src/cheese-application.vala
+@@ -116,7 +116,7 @@ public class Cheese.Application : Gtk.Application
+             Environment.set_application_name (_("Cheese"));
+             Window.set_default_icon_name ("org.gnome.Cheese");
+ 
+-            this.add_accelerator ("space", "app.shoot", null);
++            this.set_accels_for_action ("app.shoot", {"space"});
+ 
+             // FIXME: Push these into the main window initialization.
+             main_window.setup_ui ();
+diff --git a/src/cheese-window.vala b/src/cheese-window.vala
+index 09879fc5..25df09e7 100644
+--- a/src/cheese-window.vala
++++ b/src/cheese-window.vala
+@@ -1312,6 +1312,13 @@ public class Cheese.MainWindow : Gtk.ApplicationWindow
+ 
+         var menu = application.get_menu_by_id ("thumbview-menu");
+         thumbnail_popup = new Gtk.Menu.from_model (menu);
++        
++        application.set_accels_for_action ("app.quit", {"<Primary>q"});
++        application.set_accels_for_action ("app.fullscreen", {"F11"});
++        application.set_accels_for_action ("win.file-open", {"<Primary>o"});
++        application.set_accels_for_action ("win.file-saveas", {"<Primary>s"});
++        application.set_accels_for_action ("win.file-trash", {"Delete"});
++        application.set_accels_for_action ("win.file-delete", {"<Shift>Delete"});
+ 
+         this.add_action_entries (actions, this);
+ 
+-- 
+GitLab
+
